@@ -546,7 +546,12 @@ static heif_error kvazaar_start_sequence_encoding_intern(void* encoder_raw, cons
 
   if (nclx &&
       (input_class == heif_image_input_class_normal ||
+#if WITH_EXPERIMENTAL_GAIN_MAP
+       input_class == heif_image_input_class_thumbnail ||
+       input_class == heif_image_input_class_gain_map)) {
+#else
        input_class == heif_image_input_class_thumbnail)) {
+#endif
     config->vui.colorprim = nclx->color_primaries;
     config->vui.transfer = nclx->transfer_characteristics;
     config->vui.colormatrix = nclx->matrix_coefficients;

@@ -165,6 +165,14 @@ std::vector<heif_brand2> compute_compatible_brands(const HeifContext* ctx, heif_
     }
   }
 
+#if WITH_EXPERIMENTAL_GAIN_MAP
+  // --- --- ISO 21496 HDR gain maps (tmap)
+  if (ctx->has_tmap()) {
+    compatible_brands.push_back(heif_brand2_tmap);
+  }
+#endif   // WITH_EXPERIMENTAL_GAIN_MAP
+
+
   return compatible_brands;
 }
 

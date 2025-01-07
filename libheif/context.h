@@ -51,6 +51,8 @@ class ImageItem;
 
 class Track;
 
+class ImageMetadata;
+
 struct TrackOptions;
 
 
@@ -165,6 +167,16 @@ public:
   heif_property_id add_property(heif_item_id targetItem, std::shared_ptr<Box> property, bool essential);
 
   Result<heif_item_id> add_pyramid_group(const std::vector<heif_item_id>& layers);
+
+#if WITH_EXPERIMENTAL_GAIN_MAP
+  bool has_tmap() const;
+
+  Error add_tmap_item(const std::vector<uint8_t>& metadata, heif_item_id& item_id);
+
+  Error link_gain_map(const std::shared_ptr<ImageItem>& primary_image,
+                      const std::shared_ptr<ImageItem>& gain_map_image, const heif_item_id tmap_id);
+#endif
+
 
   Result<heif_property_id> add_text_property(heif_item_id, const std::string& language);
 

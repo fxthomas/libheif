@@ -945,7 +945,12 @@ static heif_error x265_start_sequence_encoding_intern(void* encoder_raw, const h
 
   if (nclx &&
       (input_class == heif_image_input_class_normal ||
+#if WITH_EXPERIMENTAL_GAIN_MAP
+       input_class == heif_image_input_class_thumbnail ||
+       input_class == heif_image_input_class_gain_map)) {
+#else
        input_class == heif_image_input_class_thumbnail)) {
+#endif
 
     {
       std::stringstream sstr;

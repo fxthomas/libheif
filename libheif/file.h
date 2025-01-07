@@ -105,6 +105,10 @@ public:
 
   bool has_item_with_id(heif_item_id ID) const;
 
+#if WITH_EXPERIMENTAL_GAIN_MAP
+  bool has_tmap() const;
+#endif   // WITH_EXPERIMENTAL_GAIN_MAP
+
   uint32_t get_item_type_4cc(heif_item_id ID) const;
 
   std::string get_content_type(heif_item_id ID) const;

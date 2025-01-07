@@ -285,6 +285,62 @@ heif_error heif_image_handle_get_nclx_color_profile(const heif_image_handle* han
 }
 
 
+#if WITH_EXPERIMENTAL_GAIN_MAP
+heif_error heif_image_handle_get_derived_image_nclx_color_profile(const heif_image_handle* handle,
+                                                                  heif_color_profile_nclx** out_data)
+{
+  if (!out_data) {
+    return heif_error_null_pointer_argument;
+  }
+
+  if (!handle->image->has_derived_img_nclx_color_profile()) {
+    Error err(heif_error_Color_profile_does_not_exist,
+              heif_suberror_Unspecified);
+    return err.error_struct(handle->image.get());
+  }
+
+  auto nclx_profile = handle->image->get_derived_img_color_profile_nclx();
+  Error err = nclx_profile.get_nclx_color_profile(out_data);
+
+  return err.error_struct(handle->image.get());
+}
+
+size_t heif_image_handle_get_derived_image_raw_color_profile_size(const heif_image_handle* handle)
+{
+  auto profile_icc = handle->image->get_derived_img_color_profile_icc();
+  if (profile_icc) {
+    return profile_icc->get_data().size();
+  }
+  else {
+    return 0;
+  }
+}
+
+
+heif_error heif_image_handle_get_derived_image_raw_color_profile(const heif_image_handle* handle,
+                                                   void* out_data)
+{
+  if (out_data == nullptr) {
+    return heif_error_null_pointer_argument;
+  }
+
+  auto raw_profile = handle->image->get_derived_img_color_profile_icc();
+  if (raw_profile) {
+    memcpy(out_data,
+           raw_profile->get_data().data(),
+           raw_profile->get_data().size());
+  }
+  else {
+    Error err(heif_error_Color_profile_does_not_exist,
+              heif_suberror_Unspecified);
+    return err.error_struct(handle->image.get());
+  }
+
+  return Error::Ok.error_struct(handle->image.get());
+}
+#endif   // WITH_EXPERIMENTAL_GAIN_MAP
+
+
 heif_color_profile_nclx* heif_nclx_color_profile_alloc()
 {
   auto profile = new heif_color_profile_nclx;
