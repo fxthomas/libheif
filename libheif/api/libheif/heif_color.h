@@ -227,6 +227,22 @@ LIBHEIF_API
 heif_error heif_image_handle_get_nclx_color_profile(const heif_image_handle* handle,
                                                     heif_color_profile_nclx** out_data);
 
+#if WITH_EXPERIMENTAL_GAIN_MAP
+// Get nclx color profile for derived image
+LIBHEIF_API
+struct heif_error heif_image_handle_get_derived_image_nclx_color_profile(
+    const struct heif_image_handle* handle, struct heif_color_profile_nclx** out_data);
+
+// Get raw color profile for derived image
+LIBHEIF_API
+size_t heif_image_handle_get_derived_image_raw_color_profile_size(
+    const struct heif_image_handle* handle);
+
+LIBHEIF_API
+struct heif_error heif_image_handle_get_derived_image_raw_color_profile(
+    const struct heif_image_handle* handle, void* out_data);
+#endif   // WITH_EXPERIMENTAL_GAIN_MAP
+
 // Returned color profile has 'version' field set to the maximum allowed.
 // Do not fill values for higher versions as these might be outside the allocated structure size.
 // May return NULL.

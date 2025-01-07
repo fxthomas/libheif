@@ -194,6 +194,35 @@ public:
     }
   }
 
+#if WITH_EXPERIMENTAL_GAIN_MAP
+  // --- color profile of derived image
+
+  bool has_derived_img_nclx_color_profile() const;
+
+  nclx_profile get_derived_img_color_profile_nclx() const { return m_derived_img_color_profile_nclx; }
+
+  const std::shared_ptr<const color_profile_raw>& get_derived_img_color_profile_icc() const {
+    return m_derived_img_color_profile_icc;
+  }
+
+  virtual void set_derived_img_color_profile_icc(const std::shared_ptr<const color_profile_raw>& profile) { m_derived_img_color_profile_icc = profile; }
+
+  virtual void set_derived_img_color_profile_nclx(const nclx_profile& profile) { m_derived_img_color_profile_nclx = profile; }
+
+  void set_derived_img_color_profile(const std::shared_ptr<const color_profile>& profile)
+  {
+    auto icc = std::dynamic_pointer_cast<const color_profile_raw>(profile);
+    if (icc) {
+      set_derived_img_color_profile_icc(icc);
+    }
+
+    auto nclx = std::dynamic_pointer_cast<const color_profile_nclx>(profile);
+    if (nclx) {
+      set_derived_img_color_profile_nclx(nclx->get_nclx_color_profile());
+    }
+  }
+
+#endif   // WITH_EXPERIMENTAL_GAIN_MAP
 
   // --- premultiplied alpha
 
@@ -462,6 +491,11 @@ private:
   bool m_premultiplied_alpha = false;
   nclx_profile m_color_profile_nclx = nclx_profile::undefined();
   std::shared_ptr<const color_profile_raw> m_color_profile_icc;
+
+#if WITH_EXPERIMENTAL_GAIN_MAP
+  nclx_profile m_derived_img_color_profile_nclx = nclx_profile::undefined();
+  std::shared_ptr<const color_profile_raw> m_derived_img_color_profile_icc;
+#endif
 
   uint32_t m_PixelAspectRatio_h = 1;
   uint32_t m_PixelAspectRatio_v = 1;

@@ -161,6 +161,14 @@ bool ImageDescription::has_nclx_color_profile() const
 }
 
 
+#if WITH_EXPERIMENTAL_GAIN_MAP
+bool ImageDescription::has_derived_img_nclx_color_profile() const
+{
+  return m_derived_img_color_profile_nclx != nclx_profile::undefined();
+}
+#endif    // WITH_EXPERIMENTAL_GAIN_MAP
+
+
 nclx_profile ImageDescription::get_color_profile_nclx_with_fallback() const
 {
   if (has_nclx_color_profile()) {

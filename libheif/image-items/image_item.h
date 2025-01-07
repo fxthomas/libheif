@@ -87,12 +87,14 @@ public:
 
   virtual Result<std::vector<uint8_t>> read_bitstream_configuration_data() const { return std::vector<uint8_t>{}; }
 
-  void clear()
-  {
+  void clear() {
     m_thumbnails.clear();
     m_alpha_channel.reset();
     m_depth_channel.reset();
     m_aux_images.clear();
+#if WITH_EXPERIMENTAL_GAIN_MAP
+    m_gain_map_image.reset();
+#endif
   }
 
   HeifContext* get_context() { return m_heif_context; }
@@ -311,6 +313,24 @@ public:
     }
   }
 
+#if WITH_EXPERIMENTAL_GAIN_MAP
+  // --- gain map
+
+  const std::shared_ptr<ImageItem>& get_gain_map() const { return m_gain_map_image; }
+
+  std::shared_ptr<ImageMetadata> get_gain_map_metadata() {
+    if (m_gain_map_image != nullptr) {
+      for (auto it : m_metadata) {
+        if (it->item_type == "tmap") {
+          return it;
+        }
+      }
+    }
+    return nullptr;
+  }
+
+  void set_gain_map(std::shared_ptr<ImageItem> img) { m_gain_map_image = std::move(img); }
+#endif
 
   // --- metadata
 
@@ -478,6 +498,10 @@ private:
   bool m_is_aux_image = false;
   std::string m_aux_image_type;
   std::vector<std::shared_ptr<ImageItem>> m_aux_images;
+
+#if WITH_EXPERIMENTAL_GAIN_MAP
+  std::shared_ptr<ImageItem> m_gain_map_image;
+#endif
 
   std::vector<std::shared_ptr<ImageMetadata>> m_metadata;
 

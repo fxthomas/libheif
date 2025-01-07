@@ -227,6 +227,12 @@ void HeifFile::init_for_sequence()
   if (m_moov_box) {
     return;
   }
+#if WITH_EXPERIMENTAL_GAIN_MAP
+      m_ftyp_box->add_compatible_brand(heif_brand2_tmap);
+#endif
+#if WITH_EXPERIMENTAL_GAIN_MAP
+      m_ftyp_box->add_compatible_brand(heif_brand2_tmap);
+#endif
 
   m_moov_box = std::make_shared<Box_moov>();
   m_top_level_boxes.push_back(m_moov_box);
@@ -471,6 +477,9 @@ Error HeifFile::parse_heif_file()
       !m_ftyp_box->has_compatible_brand(heif_brand2_avif) &&
       !m_ftyp_box->has_compatible_brand(heif_brand2_1pic) &&
       !(m_ftyp_box->get_major_brand() == heif_brand2_mif3) &&
+#if WITH_EXPERIMENTAL_GAIN_MAP
+      !(m_ftyp_box->get_major_brand() == heif_brand2_tmap) &&
+#endif
       !m_ftyp_box->has_compatible_brand(heif_brand2_jpeg) &&
       !m_ftyp_box->has_compatible_brand(heif_brand2_isom) &&
       !m_ftyp_box->has_compatible_brand(heif_brand2_mp42) &&
@@ -676,6 +685,20 @@ bool HeifFile::has_item_with_id(heif_item_id ID) const
   auto infe_box = get_infe_box(ID);
   return infe_box != nullptr;
 }
+
+#if WITH_EXPERIMENTAL_GAIN_MAP
+bool HeifFile::has_tmap() const
+{
+  for (const auto& box : this->m_infe_boxes)
+  {
+    if (box.second->get_item_type_4cc() == heif_brand2_tmap)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+#endif   // WITH_EXPERIMENTAL_GAIN_MAP
 
 
 uint32_t HeifFile::get_item_type_4cc(heif_item_id ID) const
